@@ -9,18 +9,14 @@ const char* server = "api.thingspeak.com";
 WiFiClient client;
 
 //for NodeMCU
-const int trigPin = D1;
-const int echoPin = D2;
-// defines variables
-long duration;
-int distance;
+const int trigPin = A0;
+int value =0;
 
 void setup() 
 {
   Serial.begin(9600);
   Serial.println("Serial Begin");
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); 
+  
   WiFi.begin(ssid, password);
   Serial.println();
   Serial.print("Connecting to ");
@@ -37,7 +33,7 @@ void setup()
 
 void loop() 
 {
-  ultra();
+  ldr();
   delay(1000);
   // we have made changes in program to decrease the latency.
   // but it will take minimum 15 second to post data on Thingspeak channel.
@@ -50,26 +46,16 @@ void loop()
     delay(15000);
 }
 
-void ultra()
+void ldr()
 {
-  // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  duration = pulseIn(echoPin, HIGH) ;
-  distance= duration*0.034/2;
-  Serial.println("Distance =" + String(distance) + " cm");
+ value = analogRead(A0);
 }
 
 void fwd_to_Thingspeak()
 {
   String postStr = apiKey;
   postStr +="&field1=";
-  postStr += String(distance);  // ultrasonic data
+  postStr += String(value);  // ultrasonic data
   postStr += "\r\n\r\n";
           
   client.print("POST /update HTTP/1.1\n");
@@ -86,6 +72,6 @@ void fwd_to_Thingspeak()
   Serial.print("Content-Length: ");
   Serial.print(postStr.length());
   Serial.print(" Field-1: ");
-  Serial.print(distance);  // ultrasonic data
+  Serial.print(value);  
   Serial.println(" data send");            
 }
