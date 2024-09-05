@@ -92,10 +92,10 @@ void loop() {
   Serial.print(h);
   Serial.print(F("%  Temperature: "));
   Serial.print(t);
-  Serial.print(F("°C "));
+  Serial.println(F("°C "));
 
   // Send the Temperature value to Firebase
-  if (Firebase.RTDB.setInt(&fbdo, "/ldr/value/temp", t)) {
+  if (Firebase.RTDB.setInt(&fbdo, "/dht/value/temp", t)) {
     Serial.println("Temperature value sent to Firebase successfully");
   } else {
     Serial.print("Failed to send DHT value: ");
@@ -103,7 +103,7 @@ void loop() {
   }
 
   // Send the Humidity value to Firebase
-  if (Firebase.RTDB.setInt(&fbdo, "/ldr/value/humidity", h)) {
+  if (Firebase.RTDB.setInt(&fbdo, "/dht/value/humidity", h)) {
     Serial.println("Temperature value sent to Firebase successfully");
   } else {
     Serial.print("Failed to send DHT value: ");
